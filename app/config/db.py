@@ -13,7 +13,7 @@ def db_connection():
             dbname=dbname, user=user, password=password, host=host, port= port
         )
         print('DB connection successful')
-        return connection.cursor()
+        return connection.cursor(), connection
 
     except Exception as e:
         print_error(e, False)
