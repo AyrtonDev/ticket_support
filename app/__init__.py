@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 # BD config
 
-cursor = db_connection()
+cursor, conn = db_connection()
 
 # routes
 @app.route('/ping')

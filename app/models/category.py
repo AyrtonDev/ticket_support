@@ -1,9 +1,8 @@
 from typing import Dict
-import uuid
-
+from uuid import UUID
 
 class Category(Dict):
-    id: uuid
+    id: UUID
     name: str
 
 query = 'SELECT * FROM categories'
