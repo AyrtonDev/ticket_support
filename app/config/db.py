@@ -1,5 +1,5 @@
 import psycopg2
-from app.utils import print_error
+from app.utils.format import print_error
 
 def db_connection():
     dbname = 'ticket_db'
@@ -13,7 +13,7 @@ def db_connection():
             dbname=dbname, user=user, password=password, host=host, port= port
         )
         print('DB connection successful')
-        return connection.cursor()
+        return connection.cursor(), connection
 
     except Exception as e:
-        print_error(e, False)
+        print_error(e)
