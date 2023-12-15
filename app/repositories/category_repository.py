@@ -1,17 +1,15 @@
-from typing import List, Dict
+from typing import List
 from app import cursor
-from app.models.category import Category, query
+from app.models.category_status import GetCategoryStatusDto
+from app.repositories.queries.category import get_categories_query
+from app.utils.errors import InternalError
 
 class CategoryRepository:
-    def all(self) -> List[Category | None]:
-        category_list = []
-        cursor.execute(query)
-        categories = cursor.fetchall()
+    try:
+        def all(self) -> List[GetCategoryStatusDto]:
+            cursor.execute(get_categories_query)
+            rows = cursor.fetchall()
 
-        for category in categories:
-            category_list.append({
-                'id': category[0],
-                'name': category[1]
-            })
-
-        return category_list
+            return [GetCategoryStatusDto(row).to_dict() for row in rows]
+    except Exception as e:
+        raise InternalError(e)

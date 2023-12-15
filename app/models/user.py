@@ -1,18 +1,28 @@
-from typing import NamedTuple
 from uuid import UUID
+from typing import Dict, Tuple
 
-class User(NamedTuple):
-    id: UUID
+type_user = Tuple[UUID, str, str, UUID, str | None, str]
+
+class GetUserDto(Dict):
+    def __init__(self, data: type_user):
+        self.id = data[0]
+        self.name = data[1]
+        self.email = data[2]
+        self.category_id = data[3]
+        self.ranking = data[4]
+        self.category_name = data[5]
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'category_id': self.category_id,
+            'ranking': self.ranking,
+            'category_name': self.category_name
+        }
+
+class PostUserDto(Dict):
     name: str
     email: str
-    category_id: UUID
-    cateforu_name: str
-    ranking: str | None
-
-post_client_query = 'INSERT INTO users (username, email, category_id) VALUES(%(name)s, %(email)s, %(category)s) RETURNING user_id'
-
-post_analyst_query = 'INSERT INTO users (username, email, category_id, ranking) VALUES(%(name)s, %(email)s, %(category)s, %(ranking)s) RETURNING user_id'
-
-get_users_query = 'SELECT users.*, categories.category_name AS category_name FROM users LEFT JOIN categories ON categories.category_id = users.category_id'
-
-delete_user_query = 'DELETE FROM users WHERE user_id = %s'
+    category: UUID
