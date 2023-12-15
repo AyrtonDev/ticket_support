@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS categories (
 
 CREATE TABLE IF NOT EXISTS users (
     user_id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4() PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
+    user_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     category_id UUID REFERENCES categories(category_id),
     ranking VARCHAR(1)

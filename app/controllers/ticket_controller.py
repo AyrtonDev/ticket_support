@@ -2,7 +2,7 @@ from app.models.ticket import PutTicketDto
 from app.repositories.ticket_repository import TicketRepository
 from app.utils.format import build_response, is_valid_uuid
 from app.utils.errors import BadRequestion, FieldNotFound, NotAllowed, NotFound, InternalError
-from flask import request, g
+from flask import g
 
 
 class TicketController():
@@ -48,12 +48,10 @@ class TicketController():
         except InternalError as e:
             return e.response
 
-    def create(self):
+    def create(self, input):
         try:
             is_analyst = g.is_analyst
             user_id = g.user_id
-
-            input = request.get_json()
 
             if is_analyst:
                 raise NotAllowed("you don't have permission for this action")
@@ -75,7 +73,7 @@ class TicketController():
 
             response = self._ticket_repository.create(user_id=user_id, **input)
 
-            return build_response(response, '')
+            return build_response(response, '', 201)
 
         except BadRequestion as e:
             return e.response
@@ -190,7 +188,7 @@ class TicketController():
 
             self._ticket_repository.close(*data)
 
-            return build_response(None, 'the ticket was closed')
+            return build_response(None, f'the ticket {ticket_id} was closed')
 
         except BadRequestion as e:
             return e.response
