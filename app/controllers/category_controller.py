@@ -1,16 +1,17 @@
 from app.repositories.category_repository import CategoryRepository
-from app.utils import build_response
+from app.utils.errors import InternalError
+from app.utils.format import build_response, print_error
 
 class CategoryController:
     def __init__(self):
         self._category_repository = CategoryRepository()
 
     def all(self):
-        categories = self._category_repository.all()
+        try:
+            categories = self._category_repository.all()
 
-        return build_response(
-            message="",
-            data= categories
-        )
+            return build_response(categories,'')
+        except InternalError as e:
+            return e.response
 
 category_controller = CategoryController()

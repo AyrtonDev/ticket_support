@@ -1,92 +1,58 @@
 from uuid import UUID
 from typing import List
 from app import cursor, conn
-from app.dtos.user_dto import get_user_dto, post_user_dto
-from app.models.user import User, post_analyst_query, post_client_query, get_users_query, delete_user_query
+from app.models.user import GetUserDto, PostUserDto
+from app.repositories.queries.category import get_category_query
+from app.repositories.queries.user import post_analyst_query, post_client_query, get_users_query, get_user_id_query
+from app.utils.errors import InternalError
 
 
 class UserRepository:
     def __init__(self):
-        cursor.execute("SELECT * FROM categories WHERE category_name = 'analyst'")
+        cursor.execute(get_category_query, ('analyst', ))
 
-        self._analyst_id = cursor.fetchone()[0]
+        self._analyst_category_id = cursor.fetchone()[0]
 
-    def all(self) -> List[get_user_dto]:
+    def all(self) -> List[GetUserDto]:
         try:
-            users_list = []
             cursor.execute(get_users_query)
-            users: List[User] = cursor.fetchall()
+            rows = cursor.fetchall()
 
-            print(users)
-
-            for user in users:
-                d_user = {}
-
-                if user[5] == 'analyst':
-                    d_user.update({
-                        'id': user[0],
-                        'name': user[1],
-                        'email': user[2],
-                        'category_id': user[3],
-                        'ranking': user[4],
-                        'category_name': user[5]
-                    })
-
-                d_user.update({
-                    'id': user[0],
-                    'name': user[1],
-                    'email': user[2],
-                    'category_id': user[3],
-                    'category_name': user[5]
-                })
-
-                users_list.append(d_user)
-
-            return users_list
+            return [GetUserDto(row).to_dict() for row in rows]
 
         except Exception as e:
-            raise e
+            raise InternalError(e)
 
-    def create(self, data: post_user_dto) -> UUID:
+    def one_by_id(self, user_id: UUID) -> GetUserDto | None:
         try:
-            if self._analyst_id == data['category']:
+            cursor.execute(get_user_id_query, ( user_id,))
+
+            row = cursor.fetchone()
+
+            if row is None:
+                return None
+
+            return GetUserDto(row).to_dict()
+
+        except Exception as e:
+            raise InternalError(e)
+
+    def create(self, data: PostUserDto) -> UUID:
+        try:
+            if self._analyst_category_id == data['category']:
                 cursor.execute(
                     post_analyst_query,
-                    {
-                        'name': data['name'],
-                        'email': data['email'],
-                        'category': data['category'],
-                        'ranking': 'D'
-                    }
+                    {**data, 'ranking': 'D'}
                 )
             else:
                 cursor.execute(
                     post_client_query,
-                    {
-                        'name': data['name'],
-                        'email': data['email'],
-                        'category': data['category'],
-                    }
+                    {**data}
                 )
-
-            new_user_id = cursor.fetchone()[0]
 
             conn.commit()
 
-            return new_user_id
-        except Exception as e:
-            raise e
-
-    def delete(self, user_id):
-        try:
-            cursor.execute(
-                delete_user_query,
-                (
-                    user_id,
-                )
-            )
-
-            conn.commit()
+            return cursor.fetchone()[0]
 
         except Exception as e:
-            raise e
+            raise InternalError(e)
