@@ -1,9 +1,19 @@
-valid_data_analyst = {
+data_analyst = {
     "name": "AnalystTest",
     "email": "analysttest@test.com"
 }
 
-valid_data_client = {
+data_client = {
     "name": "ClientTeste",
     "email": 'clienttest@test.com'
+}
+
+data_ticket_short = {
+    "title": "test short",
+    "description": "this is a data to the short way test of ticket"
+}
+
+data_ticket_long = {
+    "title": "test long",
+    "description": "this is a data to the long way test of ticket"
 }

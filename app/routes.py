@@ -1,3 +1,4 @@
+from flask import request
 from app import app
 from app.middlewares.validations import validate
 
@@ -16,11 +17,13 @@ def category_handle():
 
 @app.route('/register', methods=['POST'])
 def register_user_handle():
-    return auth_controller.register()
+    input = request.get_json()
+    return auth_controller.register(input)
 
 @app.route('/login', methods=['POST'])
 def login_user_handle():
-    return auth_controller.login()
+    input = request.get_json()
+    return auth_controller.login(input)
 
 # User routes
 
@@ -41,8 +44,9 @@ def get_user_handle(user_id):
 
 @app.route('/ticket', methods=['POST'])
 @validate.token
-def create_ticket_handle(*args, **kwargs):
-    return ticket_controller.create()
+def create_ticket_handle():
+    input = request.get_json()
+    return ticket_controller.create(input)
 
 @app.route('/tickets')
 @validate.token

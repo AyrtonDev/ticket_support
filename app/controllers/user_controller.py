@@ -1,6 +1,6 @@
 from app.repositories.user_repository import UserRepository
 from app.utils.errors import BadRequestion, FieldNotFound, InternalError, NotFound
-from app.utils.format import build_response, is_valid_uuid, print_error
+from app.utils.format import build_response, is_valid_uuid
 from flask import g
 
 class UserController:
@@ -17,7 +17,7 @@ class UserController:
 
     def myself(self):
         try:
-            user_id = g.user_id
+            user_id = g.get('user_id')
 
             user = self._user_repository.one_by_id(user_id)
 

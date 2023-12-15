@@ -1,20 +1,16 @@
 import re
 import jwt
-from flask import request
 from app import app
 from app.repositories.user_repository import UserRepository
 from app.utils.errors import BadRequestion, FieldNotFound, InternalError, NotFound
-from app.utils.format import build_response, is_valid_uuid, print_error
-from app.models.user import PostUserDto
+from app.utils.format import build_response, is_valid_uuid
 
 class AuthController:
     def __init__(self):
         self._user_repository = UserRepository()
 
-    def register(self):
+    def register(self, input):
         try:
-            input = request.get_json()
-
             if not input:
                 return BadRequestion("the body is empty")
 
@@ -47,9 +43,7 @@ class AuthController:
         except InternalError as e:
             return e.response
 
-    def login(self):
-        input = request.get_json()
-
+    def login(self, input):
         try:
             if not input:
                 raise FieldNotFound('user_id is required')
@@ -57,7 +51,7 @@ class AuthController:
             user_id = input['user_id']
 
             if not is_valid_uuid(user_id):
-                raise BadRequestion('Category is invalid')
+                raise BadRequestion('user_id is invalid')
 
             user = self._user_repository.one_by_id(user_id)
 
