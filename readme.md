@@ -53,6 +53,5 @@ Se quiser rodas os teste você pode esecutar no terminal da pasta do projeto:
 ```
 pytest
 ```
-Ou faça uma alteração no código e tente commita, ele rodara o teste antes, se falhar não deixará fazer o commit.
 
 ## Obrigado
