@@ -48,7 +48,7 @@ def test_one_user_not_found(context):
         response = user_controller.one(f'{uuid4()}')
         data = response.get_json()
 
-        assert response.status_code == 404
+        assert response.status_code == 400
         assert data['data'] is None
         assert data['message'] == 'user not found'
 
